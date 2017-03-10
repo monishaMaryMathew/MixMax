@@ -39,28 +39,44 @@ html
       }
   |   
   body
-    h2 Modal Example
-    // Trigger/Open The Modal
-    button#myBtn Open Modal
+    h2 A Mixmax App
+    |   &#x9;
+    p
+      | Here is a modest attempt by someone who started with the Node.js ecosystem less than 24 hours ago
+    | &#x9;
+    br
+    |     
+    p
+      | If you are reading an article, a research paper or a certain material that refers to a handhul of links. And if you mostly don&apos;t have the time to spare or the pressing need to go through all the links, wouldn&apos;t it be great if you could get the gist without cluttering your browser with redundant tabs?
+      br
+      | And even better - if the &apos;extra&apos; information is made available only on the user&apos;s request(in this prototype it&apos;s made available on hover over the links) ensuring that the main focus is always on the actual content of the article.
+    |   
+    |   
+    br
+    |   
+    b List of URLs
+    table#myTable
+    br
+    | Enter new URL to be added to the list: 
+    input#new_URL(type='text', name='new_URL', value='')
+    button(onclick='myFunction()') Add URL
     // The Modal
     #myModal.modal
       // Modal content
       .modal-content
         span.close &times;
         |       
-        p Some text in the Modal..
+        p#popup_url_holder Some text in the Modal..
+        |       
+        #popup_dynamic_image_holder
+    |   
+    script(src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js')
     |   
     script.
       // Get the modal
       var modal = document.getElementById('myModal');
-      // Get the button that opens the modal
-      var btn = document.getElementById("myBtn");
       // Get the <span> element that closes the modal
       var span = document.getElementsByClassName("close")[0];
-      // When the user clicks the button, open the modal
-      btn.onclick = function() {
-      modal.style.display = "block";
-      }
       // When the user clicks on <span> (x), close the modal
       span.onclick = function() {
       modal.style.display = "none";
@@ -70,4 +86,55 @@ html
       if (event.target == modal) {
       modal.style.display = "none";
       }
+      }
+      //add new URL function
+      function myFunction() {
+      var url = new_URL.value;
+      if(url=="") {
+      alert("Please enter a valid url");
+      } else {
+      console.log("Psst");
+      var table = document.getElementById("myTable");
+      var row = table.insertRow(0);
+      var cell = row.insertCell(0);
+      cell.innerHTML = url;
+      getImage(cell, url);
+      new_URL.value="";
+      }
+      }
+      function afterAPICall(cell, url, image_tag) {
+      cell.onmouseover = function() {
+      var popup_url = document.getElementById("popup_url_holder");
+      popup_url.innerHTML = url;
+      console.log('image_tag:'+image_tag);  document.getElementById("popup_dynamic_image_holder").innerHTML=image_tag;
+      modal.style.display = "block";
+      }
+      }
+      // direct way
+      function getImage(cell, url){
+      var image_tag = "";
+      var uri = url;
+      var token1 = "\\:";
+      var newToken1 = "%3A";
+      var token2 = "\\/";
+      var newToken2 = "%2F";
+      var newStr1 = uri.split(token1).join(newToken1);
+      var res = newStr1.split(token2).join(newToken2);
+      console.log('url : '+'https://localhost:9146/resolver?url='+res);
+      var jqxhr = $.get( 'https://localhost:9146/resolver?url='+res, function() {
+      console.log('it worked!!!!!');
+      })
+      .done(function(data) {
+      console.log( "second success" );
+      console.log('data:'+data);
+      console.log('body:'+data.body);
+      image_tag = data.body;
+      afterAPICall(cell, url, image_tag);
+      })
+      .fail(function() {
+      console.log('Better luck next time');
+      })
+      .always(function() {
+      console.log( "finished" );
+      });
       }
