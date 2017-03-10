@@ -49,31 +49,3 @@ module.exports = app;
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-var Client = require('node-rest-client').Client;
- 
-var client = new Client();
-var uri = "http://giphy.com/gifs/excited-the-office-yes-t3Mzdx0SA3Eis";
-var res = uri.replace(/\//g , "%2F").replace(/\:/g , "%3A");
-var args = {
-//    path: { "id": 120 },
-    parameters: { url: res//"http%3A%2F%2Fgiphy.com%2Fgifs%2Fexcited-the-office-yes-t3Mzdx0SA3Eis"//, 
-    //arg2: "world" 
-    }//,
-//    headers: { "test-header": "client-api" },
-//    data: "<xml><arg1>hello</arg1><arg2>world</arg2></xml>"
-};
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-// direct way 
-var req = client.get("https://localhost:9146/resolver", args,
-function(data, response) { //("http://remote.site/rest/xml/method", function (data, response) {
-    // parsed response body as js object 
-    console.log(data);
-    // raw response 
-   // console.log(response);
-    console.log('it worked!!!!!');
-});
-
-req.on('error', function (err) {
-    console.log('request error', err);
-});
